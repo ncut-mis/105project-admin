@@ -11,6 +11,11 @@ class AdminController extends Controller
     /*Admin*/
     public function login()
     {
+        return view('login');
+    }
+
+    public function home()
+    {
         Auth::user();
         return view('admin.dashboard.index');
     }
@@ -76,17 +81,12 @@ class AdminController extends Controller
 
     public function destroy($id)
     {
-        Restaurant::destroy($id);
+        $restaurant=Restaurant::findOrFail($id);
+        $staff=Staff::where('restaurant_id',$restaurant->id);
+        $staff->delete();
+        $restaurant->delete();
         return redirect()->route('admin.restaurants.index')->with('success','刪除完成 !');
     }
-
-//    public function staff($id)
-//    {
-//        $restaurants=Restaurant::find($id);
-//        $data3=Staff::where('restaurant_id',$id)->get();
-//        $data=['staff'=>$data3,'restaurants' => $restaurants];
-//        return view('admin.restaurants.status',$data);
-//    }
 
     public function status($id)
     {
