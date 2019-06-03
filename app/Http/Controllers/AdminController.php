@@ -1,11 +1,16 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Coupon;
+use App\Customer;
+use App\Meal;
+use App\Post;
 use DB;
 use Auth;
 use App\Restaurant;
 use App\Staff;
 use Illuminate\Http\Request;
+
 class AdminController extends Controller
 {
     /*Admin*/
@@ -43,7 +48,6 @@ class AdminController extends Controller
 
     public function store(Request $request)
     {
-//        echo $request;
         $restaurant=DB::table('restaurants')->insertGetId([
             'name'=>$request['name'],
             'logo'=>'Original.jpg',
@@ -73,7 +77,6 @@ class AdminController extends Controller
 
     public function update(Request $request,$id)
     {
-//        echo $request;
         $restaurant=Restaurant::find($id);
         $restaurant->update($request->all());
         return redirect()->route('admin.restaurants.index')->with('success','修改成功 !');
@@ -83,7 +86,16 @@ class AdminController extends Controller
     {
         $restaurant=Restaurant::findOrFail($id);
         $staff=Staff::where('restaurant_id',$restaurant->id);
+        $coupon=Coupon::where('restaurant_id',$restaurant->id);
+        $customer=Customer::where('restaurant_id',$restaurant->id);
+        $meal=Meal::where('restaurant_id',$restaurant->id);
+        $post=Post::where('restaurant_id',$restaurant->id);
+
         $staff->delete();
+        $coupon->delete();
+        $customer->delete();
+        $meal->delete();
+        $post->delete();
         $restaurant->delete();
         return redirect()->route('admin.restaurants.index')->with('success','刪除完成 !');
     }
